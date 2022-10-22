@@ -7,7 +7,7 @@ pipeline {
 
             steps {
                 script {
-                    dockerapp = docker.build("autanbr/kube-news:${env.BUILD_ID}", '-f ./src/Dockerfile ./src')
+                  def customImage = docker.build("autanbr/kube-news:${env.BUILD_ID}", '-f ./src/Dockerfile ./src')
                 }
             }
         }
@@ -17,8 +17,9 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("https://registry.hub.docker.com", 'dockerhub')
-                        dockerapp.push('latest')
-                        dockerapp.push("${env.BUILD_ID}")
+                    customImage.push()
+                        //customImage.push('latest')
+                        //customImage.push("${env.BUILD_ID}")
                  }
             }
         }

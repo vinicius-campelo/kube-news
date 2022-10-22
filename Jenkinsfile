@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     stages {
         stage('Build Docker Image') {
             steps {
@@ -23,7 +23,7 @@ pipeline {
 
         stage ('Deploy Kubernetes') {
             steps {
-                withKubeconfig ([credencialsId: 'kubeconfig']) {
+                withKubeConfig ([credentialsId: 'kubeconfig']) {
                     sh 'kubectl apply -f ./ks8/deployment.yaml'
                 }
             }

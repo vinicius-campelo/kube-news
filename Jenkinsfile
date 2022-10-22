@@ -3,11 +3,11 @@ pipeline {
 
     stages {
 
-       stage ('Build Docker Image') {
+        stage ('Build Docker Image') {
 
             steps {
                 script {
-                  def customImage = docker.build("autanbr/kube-news:${env.BUILD_ID}", '-f ./src/Dockerfile ./src')
+                    customImage = docker.build("autanbr/docker-test:${env.BUILD_ID}", '-f ./src/Dockerfile ./src')
                 }
             }
         }
@@ -16,8 +16,8 @@ pipeline {
         stage ('Push Docker Image') {
 
             steps {
-                script { 
-                    docker.withRegistry("", "dockerhub")
+                script {
+                    docker.withRegistry("https://registry.hub.docker.com", "dockerhub")
                     customImage.push('latest')
                     customImage.push("${env.BUILD_ID}")
                 }

@@ -1,27 +1,24 @@
 pipeline {
-    agent any
+     agent any
 
-    stages {
+     stages {
+          stage('Build Docker Image') {
+               steps {
+                    script {
+                         dockerapp = docker.build("autanbr/kube-news:${env.BUILD_ID}", '-f ./src/Dockerfile ./src')
+                    }
+               }
+          }
 
-        stage ('Build Docker Image') {
-
-            steps {
-                script {
-                    customImage = docker.build("autanbr/docker-test:${env.BUILD_ID}", '-f ./src/Dockerfile ./src')
-                }
-            }
-        }
-
-
-        stage ('Push Docker Image') {
-
-            steps {
-                script {
-                    docker.withRegistry("https://registry.hub.docker.com/", "dockerhub")
-                    customImage.push('latest')
-                    customImage.push("${env.BUILD_ID}")
-                }
-            }
-        }
-    }
+          stage ('Push Docker Image') {
+               steps {
+                    script {
+                         withDockerRegistry( credentialsId: 'dockerhub', url: "https://registry.hub.docker.com/") {
+                              dockerapp.push('latest')
+                              dockerapp.push("${env.BUILD_ID}")
+                         }
+                    }
+               }
+          }
+     }
 }

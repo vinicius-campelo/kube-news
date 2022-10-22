@@ -11,17 +11,5 @@ pipeline {
                 }
             }
         }
-
-        stage ('Push Docker Image') {
-
-            steps {
-                script {
-                    docker.withRegistry("https://hub.docker.com", 'dockerhub')
-                    customImage.push()
-                        //customImage.push('latest')
-                        //customImage.push("${env.BUILD_ID}")
-                 }
-            }
-        }
     }
 }

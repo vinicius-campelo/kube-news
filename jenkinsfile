@@ -1,36 +1,27 @@
 pipeline {
-  environment {
-    registry = "autanbr/kube-news"
-    registryCredential = 'dockerhub'
-    dockerImage = ''
-  }
-  agent any
-  stages {
-    stage('Cloning Git') {
-      steps {
-        git 'https://github.com/vinicius-campelo/kube-news.git'
-      }
-    }
-    stage('Building image') {
-      steps{
-        script {
-          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+    agent any
+
+    stages {
+
+        stage ('Build Docker Image') {
+
+            steps {
+                script {
+                  def customImage = docker.build("autanbr/kube-news:${env.BUILD_ID}", '-f ./src/Dockerfile ./src')
+                }
+            }
         }
-      }
-    }
-    stage('Deploy Image') {
-      steps{
-        script {
-          docker.withRegistry( '', registryCredential ) {
-            dockerImage.push()
-          }
+
+        stage ('Push Docker Image') {
+
+            steps {
+                script {
+                    docker.withRegistry("https://registry.hub.docker.com", 'dockerhub')
+                    customImage.push()
+                        //customImage.push('latest')
+                        //customImage.push("${env.BUILD_ID}")
+                 }
+            }
         }
-      }
     }
-    stage('Remove Unused docker image') {
-      steps{
-        sh "docker rmi $registry:$BUILD_NUMBER"
-      }
-    }
-  }
 }

@@ -54,7 +54,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: autanbr/kube-news:{{TAG}}
+        image: autanbr/kube-news:v1
         ports:
         - containerPort: 8080
         env:
